@@ -37,7 +37,52 @@ class CreateCinemaSchema extends Migration
      */
     public function up()
     {
-        throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
+        Schema::create('movies', function ($table) {
+            $table->increments('id');
+            $table->string('title', 300);
+            $table->string('vote');
+            $table->integer('like');
+            $table->string('type', 200);
+            $table->timestamps();
+        });
+
+        Schema::create('show_time', function ($table) {
+            $table->increments('id');
+            $table->foreign('movie_id')->references('id')->on('movies');
+            $table->datetime('start');
+            $table->datetime('end');
+            $table->timestamps();
+        });
+
+        Schema::create('pricing', function ($table) {
+            $table->increments('id');
+            $table->foreign('show_id')->references('id')->on('show_time');
+            $table->string('type', 200);
+            $table->string('price');
+            $table->timestamps();
+        });
+
+        Schema::create('book_ticket', function ($table) {
+            $table->increments('id');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('movie_id')->references('id')->on('movies');
+            $table->foreign('show_id')->references('id')->on('show_time');
+            $table->string('seat_numbers');// 11,12,13,14
+            $table->string('row'); // A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P
+            $table->integer('number_of_seat');
+            $table->enum('status', ['booked', 'pending', 'fail']);
+            $table->timestamps();
+        });
+
+        Schema::create('cinema', function ($table) {
+            $table->increments('id');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('movie_id')->references('id')->on('movies');
+            $table->text('location');
+            $table->string('theater_name');
+            $table->enum('status', ['active','inactive']);
+            $table->timestamps();
+        });
     }
 
     /**
