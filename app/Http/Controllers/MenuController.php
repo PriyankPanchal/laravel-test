@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MenuItem;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Response;
 
 class MenuController extends BaseController
 {
@@ -94,6 +95,22 @@ class MenuController extends BaseController
      */
 
     public function getMenuItems() {
-        throw new \Exception('implement in coding task 3');
+        try {
+            $menuItems = MenuItem::with('children')->get();
+
+            return Response::json([
+                "status" => true,
+                "menuItems" => $menuItems,
+                "message" => "Get menu items successfully",
+            ]);
+        } catch (\Exception $e) {
+            return Response::json([
+                "status" => false,
+                "errors" => [
+                    "code" => $e->getCode(),
+                    "message" => $e->getMessage()
+                ],
+            ]);
+        }
     }
 }
