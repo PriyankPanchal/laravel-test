@@ -121,8 +121,6 @@ class EventsController extends BaseController
                 ],
             ]);
         }
-
-        throw new \Exception('implement in coding task 1');
     }
 
 
@@ -202,6 +200,29 @@ class EventsController extends BaseController
 
     public function getFutureEventsWithWorkshops()
     {
-        throw new \Exception('implement in coding task 2');
+        try {
+            $events = Event::with('futureworkshops')->get();
+
+            foreach ($events as $key => $val) {
+                if (count($val->futureworkshops) <= 0) {
+                    unset($events[$key]);
+                }
+            }
+
+
+            return Response::json([
+                "status" => true,
+                "event" => $events,
+                "message" => "Get event with workshops successfully",
+            ]);
+        } catch (\Exception $e) {
+            return Response::json([
+                "status" => false,
+                "errors" => [
+                    "code" => $e->getCode(),
+                    "message" => $e->getMessage()
+                ],
+            ]);
+        }
     }
 }
